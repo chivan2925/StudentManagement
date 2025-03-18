@@ -16,6 +16,7 @@ class MainApp(tk.Tk):
             "Điểm": "#FFFF99",
             "Điểm Danh": "#FF66FF",
             "Học Phí": "#66CCFF",
+            
         }
 
         # Tạo layout: Menu bên trái + Nội dung bên phải
