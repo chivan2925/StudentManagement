@@ -1,58 +1,46 @@
 import tkinter as tk
-from tkinter import ttk, messagebox
-from BUS.AttendanceBUS import AttendanceBUS
+from tkinter import ttk
 
-class AttendanceGUI:
-    def __init__(self, root):
-        self.root = root
-        self.root.title("Quản lý điểm danh")
-        self.root.geometry("600x400")
+root = tk.Tk()
+root.title("Quản lý thông tin Điểm danh")
+root.geometry("900x500")
+root.configure(bg="white")
 
-        self.attendance_bus = AttendanceBUS()
+label_title = tk.Label(root, text="Quản lý thông tin Điểm danh", font=("Arial", 18, "bold"), bg="white")
+label_title.pack(pady=10)
 
-        # Label & Entry chọn ngày
-        self.label_date = tk.Label(root, text="Ngày:", font=("Arial", 12))
-        self.label_date.pack()
-        self.entry_date = tk.Entry(root, font=("Arial", 12))
-        self.entry_date.pack()
+frame_table = tk.Frame(root, bg="blue")
+frame_table.pack(pady=10, padx=10, fill="both", expand=True, side="left")
 
-        # Nút lấy dữ liệu điểm danh
-        self.btn_fetch = tk.Button(root, text="Lấy danh sách điểm danh", command=self.fetch_attendance)
-        self.btn_fetch.pack()
+columns = ["MSSV", "Họ", "Tên", "Nhóm", "Trạng Thái", "Ghi Chú"]
+for i, col in enumerate(columns):
+    lbl = tk.Label(frame_table, text=col, font=("Arial", 10, "bold"), bg="lightblue", width=12)
+    lbl.grid(row=0, column=i, padx=2, pady=2)
 
-        # Treeview hiển thị dữ liệu
-        self.tree = ttk.Treeview(root, columns=("ID", "Face ID", "Schedule ID", "Ngày", "Trạng thái"), show="headings")
-        self.tree.heading("ID", text="ID")
-        self.tree.heading("Face ID", text="Face ID")
-        self.tree.heading("Schedule ID", text="Schedule ID")
-        self.tree.heading("Ngày", text="Ngày")
-        self.tree.heading("Trạng thái", text="Trạng thái")
-        self.tree.pack(expand=True, fill="both")
 
-        # Nút thống kê
-        self.btn_statistics = tk.Button(root, text="Thống kê", command=self.show_statistics)
-        self.btn_statistics.pack()
+frame_search = tk.Frame(root, bg="white")
+frame_search.pack(pady=10, padx=10, fill="y", side="right")
 
-    def fetch_attendance(self):
-        date = self.entry_date.get()
-        if not date:
-            messagebox.showerror("Lỗi", "Vui lòng nhập ngày")
-            return
-        
-        self.tree.delete(*self.tree.get_children())  # Xóa dữ liệu cũ
-        data = self.attendance_bus.get_attendance_by_date(date)
-        for record in data:
-            self.tree.insert("", "end", values=(record.attendance_id, record.face_id, record.schedule_id, record.attendance_date, record.status))
+lbl_search = tk.Label(frame_search, text="Tìm kiếm theo: ID SINH VIÊN", font=("Arial", 10, "bold"), fg="red", bg="white")
+lbl_search.pack()
 
-    def show_statistics(self):
-        data = self.attendance_bus.get_statistics()
-        result_text = "\n".join([f"{status}: {count}" for status, count in data])
-        messagebox.showinfo("Thống kê", result_text)
+entry_search = tk.Entry(frame_search, width=20)
+entry_search.pack(pady=5)
 
-    def __del__(self):
-        self.attendance_bus.close()
+btn_search = tk.Button(frame_search, text="Tìm kiếm")
+btn_search.pack(pady=5)
 
-if __name__ == "__main__":
-    root = tk.Tk()
-    app = AttendanceGUI(root)
-    root.mainloop()
+btn_view_all = tk.Button(frame_search, text="Xem tất cả")
+btn_view_all.pack(pady=5)
+
+frame_update = tk.Frame(frame_search, bg="lightblue")
+frame_update.pack(pady=20, fill="both", expand=True)
+
+lbl_update = tk.Label(frame_update, text="Chỉnh sửa trạng thái và ghi chú", font=("Arial", 10, "bold"), bg="lightblue")
+lbl_update.pack()
+
+fields = ["MSSV", "Họ", "Trạng Thái", "Nhóm", "Tên", "Ghi Chú"]
+for field in fields:
+    lbl = tk.Label(frame_update, text=field, font=("Arial", 10), bg="lightblue")
+    lbl.pack(anchor="w", padx=10, pady=2)
+root.mainloop()
